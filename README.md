@@ -22,6 +22,11 @@ This program can also be viewed as a general framework for classifying video wit
 #####CUDA (Recommended)
 For GPU usage you need CUDA 8.0. Highly recommended. Increases speed 10x. This can be installed from a package or by downloading from [NVIDIA directly](https://developer.nvidia.com/cuda-downloads). 
 
+```bash
+#On Ubuntu 16.10
+sudo apt install libcublas-8.0 libcudart-8.0 libcurand-8.0 
+```
+
 #####CuDNN (Optional)
 
 Additional drivers from NVIDIA that make the CUDA GPU support even faster.
@@ -35,7 +40,6 @@ Additional drivers from NVIDIA that make the CUDA GPU support even faster.
 ####Download Miles Deep
 
 TODO: Download links here (3 versions)
-TODO: maybe speed table xxx, gpu, cpu
 
 
 Version | Runtime
@@ -50,7 +54,7 @@ I'm working on a version for Windows (sorry I don't have a Mac). The code is ava
 ##Usage
 
 Example:
-```miles-deep -t sex_back,sex_front movie.mp4``` 
+`miles-deep -t sex_back,sex_front movie.mp4` 
 
 This finds the scenes sex from the back or front and outputs the result
 in `movie.cut.avi`
@@ -98,14 +102,15 @@ Here's an example of how to use the program with your own model (or a pre-traine
 
 `MODEL_PATH=/models/bvlc_reference_caffenet/ `
 
-```miles-deep -t n02123045 \
-        -p ${CAFFE_ROOT}/${MODEL_PATH}/deploy.prototxt \
-        -m ${CAFFE_ROOT}/data/ilsvrc12/imagenet_mean.binaryproto \
-        -w ${CAFFE_ROOT}/${MODEL_PATH}/bvlc_reference_caffenet.caffemodel \
-        -l ${CAFFE_ROOT}/data/ilsvrc12/synsets.txt \
-        movie.mp4```
-
-This finds the scenes in `movie.mp4` with a tabby cat and returns ```movie.cut.mp4``` with only those parts. n02123045 is the category for tabby cats. You can find the category names in `${CAFFE_ROOT}data/ilsvrc12/synset_words.txt`. `${CAFFE_ROOT}` is directory where Caffe is installed. You can use a pre-trained model from the [model zoo](https://github.com/BVLC/caffe/wiki/Model-Zoo) instead.
+```bash
+miles-deep -t n02123045 \
+  -p ${CAFFE_ROOT}/${MODEL_PATH}/deploy.prototxt \
+  -m ${CAFFE_ROOT}/data/ilsvrc12/imagenet_mean.binaryproto \
+  -w ${CAFFE_ROOT}/${MODEL_PATH/bvlc_reference_caffenet.caffemodel \
+  -l ${CAFFE_ROOT}/data/ilsvrc12/synsets.txt \
+  movie.mp4
+```
+This finds the scenes in `movie.mp4` with a tabby cat and returns `movie.cut.mp4` with only those parts. n02123045 is the category for tabby cats. You can find the category names in `${CAFFE_ROOT}data/ilsvrc12/synset_words.txt`. `${CAFFE_ROOT}` is directory where Caffe is installed. You can use a pre-trained model from the [model zoo](https://github.com/BVLC/caffe/wiki/Model-Zoo) instead.
 
 *Note: This example is just to show the syntax. It performs somewhat poorly in my experience, likely due to the 1000 classes. This program is ideally suited to models with a smaller number of categories with an 'other' category too. *
 
@@ -191,5 +196,5 @@ Code licensed under GPLv3, including the trained model. Caffe is licensed under 
 
 ####Contact
 
-If you have any thoughts or questions please open an issue or contact me at nipplerdeeplearning@gmail.com
+If you have problems, suggestions, or thoughts open an issue or send me email nipplerdeeplearning at gmail. 
  
