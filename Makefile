@@ -21,7 +21,7 @@ CAFFE := -Wl,--whole-archive $(libcaffe) -Wl,--no-whole-archive
 S := /usr/lib/x86_64-linux-gnu
 STATIC_LIBS := $S/libgflags.a $S/libboost_thread.a $S/libboost_system.a $S/libprotobuf.a
 
-srcfiles := $(shell find . -name "*.cpp")
+srcfiles := *.cpp
 cores := $(shell grep -c ^processor /proc/cpuinfo)
 
 all: $(appname)
