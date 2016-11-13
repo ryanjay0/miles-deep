@@ -28,7 +28,7 @@ all: $(appname)
 
 $(appname): $(libcaffe) $(srcfiles)
 	$(CXX) $(CXXFLAGS) -o $(appname) $(srcfiles) $(CAFFE) $(LDFLAGS) $(INCLUDES) \
-	    $(CUDA) $(CUDNN) $(LDLIBS) $(STATIC_LIBS) 
+	    $(CUDA) $(CUDNN) $(CPU_ONLY) $(LDLIBS) $(STATIC_LIBS) 
 
 clean: 
 	rm -rf $(appname)
