@@ -29,9 +29,6 @@ Additional drivers from NVIDIA that make the CUDA GPU support even faster.
 [Download here](https://developer.nvidia.com/cudnn). (Requires registration)
 
 
-####Additional 14.04 dependencies
-
-`sudo apt-get install libgflags-dev libgoogle-glog-dev`
 
 ####Download Miles Deep
 
