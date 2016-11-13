@@ -210,7 +210,7 @@ sudo ln -s libhdf5_serial_hl.so libhdf5_hl.so
 
 * The default is GPU without CuDNN. If you want something else edit `Makefile` and `Makefile.caffe`. Comment out or uncomment the proper lines in both files.
 
-* `make` Miles-Deep
+* `make` 
 
 #####License
 Code licensed under GPLv3, including the trained model. Caffe is licensed under BSD 2. 
