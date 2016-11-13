@@ -51,24 +51,31 @@ I'm working on a version for Windows (sorry I don't have a Mac). The code is ava
 ##Usage
 
 Example:
-`miles-deep -t sex_back,sex_front movie.mp4` 
+```shell
+miles-deep -t sex_back,sex_front movie.mp4
+``` 
 
 This finds the scenes sex from the back or front and outputs the result
 in `movie.cut.avi`
 
 Example:
-`miles-deep -x movie.avi`
+```shell
+miles-deep -x movie.avi
+```
 
 This edits out all the non-sexual scenes from 'movie.avi'
 and outputs the result in `movie.cut.avi`.
 
 Example:
-
-`miles-deep -c -b 16 -t cunnilingus -o /cut_movies movie.mkv`
+```
+miles-deep -b 16 -t cunnilingus -o /cut_movies movie.mkv
+```
 
 This reduces the batch size to 16 (default 32). 
 Finds only scenes with cunnilingus,
-outputs result in `/cut_movies/movie.cut.mkv`
+outputs result in `/cut_movies/movie.cut.mkv`.
+
+**Reduce the batch size if you run out of memory**
 
 
 ####GPU VRAM used and runtime for various batch sizes:
@@ -146,7 +153,7 @@ be done differently.
 
 The results above were obtained with mirroring but not cropping. Using cropping slightly improves the results on the resnet50\_1by2 to **95.2%**, therefore it is used as the final model.
 
-[Fine-tuning](https://www.tensorflow.org/versions/r0.9/how_tos/image_retraining/index.html) the Inception V3 model with Tensorflow also only achieved 80% accuracy. However, that is with a 299x299 image size instead of 224x224 with no mirroring, so the result is not directly comparable. Overfitting may be a problem with this model too.
+[Fine-tuning](https://www.tensorflow.org/versions/r0.9/how_tos/image_retraining/index.html) the Inception V3 model with Tensorflow also only achieved 80% accuracy. However, that is with a 299x299 image size instead of 224x224 with no mirroring or cropping, so the result is not directly comparable. Overfitting may be a problem with this model too.
 
 ###Editing the Movie
 
