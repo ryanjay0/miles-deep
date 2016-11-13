@@ -197,7 +197,7 @@ Sex front and back are defined by the position of the camera, instead of the ori
 ```bash
 sudo apt install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler
 sudo apt install --no-install-recommends libboost-all-dev
-sudo apt install libopenblas-dev 
+sudo apt install libopenblas-dev python-numpy
 
 #Add symbolic links for hdf5 library
 #(not necessary on LinuxMint 18)
