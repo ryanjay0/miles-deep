@@ -192,7 +192,21 @@ Sex front and back are defined by the position of the camera, instead of the ori
 
 1. Clone the git repository which includes Caffe as an external dependency. 
 
-2. Follow the step-by-step [instructions](http://caffe.berkeleyvision.org/installation.html) to install the Caffe dependencies for your plaform. [Ubuntu instructions](http://caffe.berkeleyvision.org/install_apt.html). The default is OpenBlas. Don't worry about editing the Makefile.config or making Caffe.
+2. Follow the step-by-step [instructions](http://caffe.berkeleyvision.org/installation.html) to install the Caffe dependencies for your plaform. [Ubuntu instructions](http://caffe.berkeleyvision.org/install_apt.html). The default is OpenBlas. Don't worry about editing the Makefile.config or making Caffe. On Ubuntu 16.04 try this in addition to the dependencies at the top:
+
+```bash
+sudo apt install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler
+sudo apt install --no-install-recommends libboost-all-dev
+sudo apt install libopenblas-dev 
+
+#Add symbolic links for hdf5 library
+#(not necessary on LinuxMint 18)
+
+cd /usr/lib/x86_64-linux-gnu
+sudo ln -s libhdf5_serial.so libhdf5.so
+sudo ln -s libhdf5_serial_hl.so libhdf5_hl.so
+
+```
 
 3. The default is GPU without CuDNN. If you want something else edit `Makefile` and `Makefile.caffe`. Comment out or uncomment the proper lines in both files.
 
