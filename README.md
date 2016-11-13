@@ -5,7 +5,7 @@ Using a deep convolutional neural network with residual connections, Miles Deep 
 
 Unlike Yahoo's recently released [NSFW model](https://github.com/yahoo/open_nsfw),  which uses a similar architecture, Miles Deep can tell the difference between nudity and various explicit sexual acts. As far as I know this is the first and only public pornography classification or editing tool.
 
-This program can also be viewed as a general framework for classifying video with a [Caffe](http://caffe.berkeleyvision.org/) model, using batching and threading in C++. By replacing the weights, model definition, and mean file it can immediately be used to edit videos with other classes without recompiling. See below for an example.
+This program can also be viewed as a general framework for classifying video with a [Caffe](http://caffe.berkeleyvision.org/) model, using batching and threading in C++. By replacing the weights, model definition, and mean file it can immediately be used to edit videos with other classes without recompiling. See below for an [example](https://github.com/ryanjay0/miles-deep#using-miles-deep-with-your-own-caffe-model).
 
 ##Installation
 
@@ -46,7 +46,7 @@ GPU | 19s
 CPU  | 1m 59s 
 *on a 24.5 minute video with a GTX 960 4GB
 ###Windows and OSX
-I'm working on a version for Windows (sorry I don't have a Mac). The code is available if you want to attempt to port it yourself.
+I'm working on a version for Windows (sorry I don't have a Mac). The code is available if you want to attempt to port it yourself. [Compilations instructions](https://github.com/ryanjay0/miles-deep#compiling) below.
 
 ##Usage
 
