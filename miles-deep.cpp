@@ -379,6 +379,7 @@ int main(int argc, char** argv)
   string temp_directory = "/tmp";
 
 
+
   //parse command line flags
   int opt;
   bool set_all_but_other = false;
@@ -447,6 +448,7 @@ int main(int argc, char** argv)
 
   //keep Caffe quiet
   FLAGS_minloglevel = 3;
+  ::google::InitGoogleLogging(argv[0]);
 
   //create the classifier
   Classifier classifier(model_def, model_weights, mean_file, label_file);

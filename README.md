@@ -13,19 +13,15 @@ This program can also be viewed as a general framework for classifying video wit
 
 ####Dependencies
 
-`sudo apt install ffmpeg libopenblas-base libhdf5-serial-dev` 
+`sudo apt install ffmpeg libopenblas-base libhdf5-serial-dev libgoogle-glog-dev` 
 
 #####Additional 14.04 Dependencies
 
-`sudo apt install libgflags-dev libgoogle-glog-dev`
+`sudo apt install libgflags-dev`
 
 #####CUDA (Recommended)
-For GPU usage you need CUDA 8.0. Highly recommended. Increases speed 10x. This can be installed from a package or by downloading from [NVIDIA directly](https://developer.nvidia.com/cuda-downloads). 
+For GPU usage you need an Nvida GPU and CUDA 8.0 drivers. Highly recommended. Increases speed 10x. This can be installed from a package or by downloading from [NVIDIA directly](https://developer.nvidia.com/cuda-downloads). 
 
-```bash
-#On Ubuntu 16.10
-sudo apt install libcublas-8.0 libcudart-8.0 libcurand-8.0 
-```
 
 #####CuDNN (Optional)
 
@@ -92,7 +88,7 @@ In addition to batching, Miles Deep also uses threading, which allows the screen
 ###Prediction Weights
 Here is an example of the predictions for each second of a video:
 
-![predictions for each second of a video](images/prediction_weights.png?raw=true)
+![predictions for each second of a video](images/prediction_weights.jpg?raw=true)
 
 
 ###Using Miles Deep with your own Caffe model
@@ -100,17 +96,18 @@ Here is an example of the predictions for each second of a video:
 
 Here's an example of how to use the program with your own model (or a pre-trained one):
 
-`MODEL_PATH=/models/bvlc_reference_caffenet/ `
 
 ```bash
+MODEL_PATH=/models/bvlc_reference_caffenet/ 
+
 miles-deep -t n02123045 \
-  -p ${CAFFE_ROOT}/${MODEL_PATH}/deploy.prototxt \
-  -m ${CAFFE_ROOT}/data/ilsvrc12/imagenet_mean.binaryproto \
-  -w ${CAFFE_ROOT}/${MODEL_PATH/bvlc_reference_caffenet.caffemodel \
-  -l ${CAFFE_ROOT}/data/ilsvrc12/synsets.txt \
+  -p caffe/${MODEL_PATH}/deploy.prototxt \
+  -m caffe/data/ilsvrc12/imagenet_mean.binaryproto \
+  -w caffe/${MODEL_PATH/bvlc_reference_caffenet.caffemodel \
+  -l caffe/data/ilsvrc12/synsets.txt \
   movie.mp4
 ```
-This finds the scenes in `movie.mp4` with a tabby cat and returns `movie.cut.mp4` with only those parts. n02123045 is the category for tabby cats. You can find the category names in `${CAFFE_ROOT}data/ilsvrc12/synset_words.txt`. `${CAFFE_ROOT}` is directory where Caffe is installed. You can use a pre-trained model from the [model zoo](https://github.com/BVLC/caffe/wiki/Model-Zoo) instead.
+This finds the scenes in `movie.mp4` with a tabby cat and returns `movie.cut.mp4` with only those parts. n02123045 is the category for tabby cats. You can find the category names in `caffe/data/ilsvrc12/synset_words.txt`. You can use a pre-trained model from the [model zoo](https://github.com/BVLC/caffe/wiki/Model-Zoo) instead.
 
 *Note: This example is just to show the syntax. It performs somewhat poorly in my experience, likely due to the 1000 classes. This program is ideally suited to models with a smaller number of categories with an 'other' category too. *
 
@@ -137,7 +134,9 @@ resnet50\_1by2  | 94.6  |      1070  |   6.9
 resnet77\_1by2  | 95.7  |      1561  |   9.4 
 
 The training loss and test accuracy:
-![fine-tuning training loss](images/train_loss.png?raw=true) ![test accuracy vs step](images/accuracy.png?raw=true)
+
+![fine-tuning training loss](images/train_loss.png?raw=true) 
+![test accuracy vs step](images/accuracy.png?raw=true)
 
 Of all the models tested, the resnet50\_1by2 provides the best balance between
 runtime, memory, and accuracy. I believe the full resnet50's low accuracy is due 
