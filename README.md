@@ -32,9 +32,9 @@ Additional drivers from NVIDIA that make the CUDA GPU support even faster.
 
 ####Download Miles Deep
 
-* [miles-deep (GPU + CuDNN)](https://github.com/ryanjay0/miles-deep/releases/download/v0.1/miles-deep-xxx.v0.1.tgz)
-* [miles-deep (GPU)](https://github.com/ryanjay0/miles-deep/releases/download/v0.1/miles-deep-gpu.v0.1.tgz)
-* [miles-deep (CPU)](https://github.com/ryanjay0/miles-deep/releases/download/v0.1/miles-deep-cpu.v0.1.tgz)
+* [miles-deep (GPU + CuDNN)](https://github.com/ryanjay0/miles-deep/releases/download/v0.2/miles-deep-xxx.v0.2.tgz)
+* [miles-deep (GPU)](https://github.com/ryanjay0/miles-deep/releases/download/v0.2/miles-deep-gpu.v0.2.tgz)
+* [miles-deep (CPU)](https://github.com/ryanjay0/miles-deep/releases/download/v0.2/miles-deep-cpu.v0.2.tgz)
 
 Download the [model](https://github.com/ryanjay0/miles-deep/files/587616/model.v0.1.tar.gz) too. Put miles-deep in the same location as the model folder (not in it). 
 
