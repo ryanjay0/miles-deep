@@ -161,9 +161,6 @@ Given the predictions for a frame each second, it takes the argmax of those pred
 
 FFmpeg supports a lot of codecs including: mp4, avi, flv, mkv, wmv, and many more.
 
-*Note: WMVs would stall at the beginning of each piece when cut without recoding, so Miles Deep re-encodes them automatically to MKV. If you know a better solution to this please let me know.*
-
-
 ###Single Frame vs Multiple Frames
 
 This model doesn't make use of any temporal information since it treats each image separately. *Karpathy et al* showed that other models which use multiple frames don't perform much better. They have difficulty dealing with camera movement. It would still be interesting to compare their slow fusion model with the results here.

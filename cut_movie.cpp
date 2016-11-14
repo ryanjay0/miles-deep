@@ -74,8 +74,11 @@ bool queryYesNo()
 
 std::string GetDirectory (const std::string& path)
 {
-        size_t found = path.find_last_of("/\\");
-            return(path.substr(0, found));
+    int found = path.find_last_of("/\\");
+    if(found < 0)
+        return(".");
+    else
+        return(path.substr(0, found));
 }
 
 
@@ -199,16 +202,13 @@ void cut( ScoreList score_list, string movie_file, vector<int> target_list, stri
         }
 
         
-        //re-encode wmv into mkv to avoid pieces freezing when played 
-        //(TODO:find a way without re-encoding)
-        string copy_args;
+        //use output_seek for wmv. fixed bug where cuts would freeze
+        bool output_seek = false;
         if(movie_type == ".wmv" || movie_type == ".WMV" || movie_type == ".Wmv")
         {
             movie_type = ".mkv";
-            copy_args = "";
+            output_seek = true;
         }
-        else
-            copy_args = " -c copy -avoid_negative_ts 1";
 
 
         //output a file for each cut in the list
@@ -220,9 +220,16 @@ void cut( ScoreList score_list, string movie_file, vector<int> target_list, stri
             string part_name = temp_path + '.' + to_string(i) + movie_type;
             cout << "   Creating piece: " << part_name << endl;
 
-            string cut_command = "ffmpeg -loglevel 8 -y -ss " + to_string(this_cut.s) + 
-                " -i \"" + movie_file + "\" -t " + to_string(this_cut.e - this_cut.s) +
-                    copy_args + " \"" + part_name + "\"";
+            string cut_command;
+            if(output_seek)
+                cut_command = "ffmpeg -loglevel 8 -y -i \"" + movie_file + "\" -ss " + 
+                    to_string(this_cut.s) + " -t " + to_string(this_cut.e - this_cut.s)  +
+                    " -c copy \"" + part_name + "\"";
+            else       
+                cut_command = "ffmpeg -loglevel 8 -y -ss " + to_string(this_cut.s) +
+                    " -i \"" + movie_file + "\" -t " + to_string(this_cut.e - this_cut.s)  +
+                    " -c copy -avoid_negative_ts 1 \"" + part_name + "\"";
+
             if(system(cut_command.c_str()))
             {
                 cerr << "Error cutting piece : " << part_name << endl;
