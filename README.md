@@ -20,7 +20,7 @@ This program can also be viewed as a general framework for classifying video wit
 `sudo apt install libgflags-dev`
 
 #####CUDA (Recommended)
-For GPU usage you need an Nvida GPU and CUDA 8.0 drivers. Highly recommended. Increases speed 10x. This can be installed from a package or by downloading from [NVIDIA directly](https://developer.nvidia.com/cuda-downloads). 
+For GPU usage you need an Nvidia GPU and CUDA 8.0 drivers. Highly recommended; increases speed 10x. This can be installed from a package or by downloading from [NVIDIA directly](https://developer.nvidia.com/cuda-downloads). 
 
 
 #####CuDNN (Optional)
@@ -46,7 +46,7 @@ GPU | 19s
 CPU  | 1m 59s 
 *on a 24.5 minute video with a GTX 960 4GB
 ###Windows and OSX
-I'm working on a version for Windows (sorry I don't have a Mac). The code is available if you want to attempt to port it yourself. [Compilations instructions](https://github.com/ryanjay0/miles-deep#compiling) below.
+I'm working on a version for Windows. Sorry, I don't have a Mac but it should run on OSX with few changes. [Compilations instructions](https://github.com/ryanjay0/miles-deep#compiling) below.
 
 ##Usage
 
@@ -63,7 +63,7 @@ Example:
 miles-deep -x movie.avi
 ```
 
-This edits out all the non-sexual scenes from 'movie.avi'
+This edits out all the non-sexual scenes from `movie.avi`
 and outputs the result in `movie.cut.avi`.
 
 Example:
@@ -75,7 +75,7 @@ This reduces the batch size to 16 (default 32).
 Finds only scenes with cunnilingus,
 outputs result in `/cut_movies/movie.cut.mkv`.
 
-**Reduce the batch size if you run out of memory**
+   **NOTE: Reduce the batch size if you run out of memory**
 
 
 ####GPU VRAM used and runtime for various batch sizes:
@@ -117,7 +117,7 @@ miles-deep -t n02123045 \
 ```
 This finds the scenes in `movie.mp4` with a tabby cat and returns `movie.cut.mp4` with only those parts. n02123045 is the category for tabby cats. You can find the category names in `caffe/data/ilsvrc12/synset_words.txt`. You can use a pre-trained model from the [model zoo](https://github.com/BVLC/caffe/wiki/Model-Zoo) instead.
 
-*Note: This example is just to show the syntax. It performs somewhat poorly in my experience, likely due to the 1000 classes. This program is ideally suited to models with a smaller number of categories with an 'other' category too. *
+*Note: This example is just to show the syntax. It performs somewhat poorly in my experience, likely due to the 1000 classes. This program is ideally suited to models with a smaller number of categories with an 'other' category too.*
 
 
 ##Model
@@ -159,9 +159,9 @@ The results above were obtained with mirroring but not cropping. Using cropping 
 
 Given the predictions for a frame each second, it takes the argmax of those predictions and creates cut blocks of the movie where argmax equals the target and the score is greater than some threshold. The gap size, the minimum fraction of frames matching the target in each block, and the score threshold are all adjustable.
 
-FFmpeg supports a lot of codes including: mp4, avi, flv, mkv, wmv, and many more.
+FFmpeg supports a lot of codecs including: mp4, avi, flv, mkv, wmv, and many more.
 
-*Note: WMVs would stall at the beginning of each piece when cut without recoding, so Miles Deep re-encodes them automatically to MKV. If you know a better solution to this please let me know.
+*Note: WMVs would stall at the beginning of each piece when cut without recoding, so Miles Deep re-encodes them automatically to MKV. If you know a better solution to this please let me know.*
 
 
 ###Single Frame vs Multiple Frames
