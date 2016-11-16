@@ -179,7 +179,7 @@ void TagTargets( ScoreList score_list, string movie_file, string output_dir,
 
 void CutMovie( ScoreList score_list, string movie_file, vector<int> target_list, 
         string output_dir, string temp_dir, int total_targets, int min_cut, int max_gap, 
-        float threshold, float min_coverage)
+        float threshold, float min_coverage, bool do_concat, bool remove_original)
 {
 
     //path stuff with movie file
@@ -284,15 +284,32 @@ void CutMovie( ScoreList score_list, string movie_file, vector<int> target_list,
             output_dir = movie_directory;
 
 
-        cout << "Concatenating parts in " << part_file_path << endl;
-        cout << "Final output: " << output_dir << sep << cut_movie << movie_type << endl;
-        
-        string concat_command = "ffmpeg -loglevel 16 -f concat -safe 0 -i " + part_file_path + 
-            " -c copy \"" + output_dir + sep + cut_movie + movie_type + "\"";
-        if(system(concat_command.c_str()))
+        if(do_concat)
         {
-            cerr << "Didn't concatenate pieces from: " << part_file_path << endl;
-            did_concat = false;
+            cout << "Concatenating parts in " << part_file_path << endl;
+            cout << "Final output: " << output_dir << sep << cut_movie << movie_type << endl;
+        
+            string concat_command = "ffmpeg -loglevel 16 -f concat -safe 0 -i " + part_file_path + 
+                " -c copy \"" + output_dir + sep + cut_movie + movie_type + "\"";
+            if(system(concat_command.c_str()))
+            {
+                cerr << "Didn't concatenate pieces from: " << part_file_path << endl;
+                did_concat = false;
+            }
+        }
+        else
+        {
+            //copy cut directory to output_dir instead of concatenating
+            cout << "Final cut directory: " << output_dir << sep << cut_movie << endl;
+            string copy_directory_cmd = "cp -r " + temp_dir + sep + "cuts/ \"" + 
+                output_dir + sep + cut_movie + "\"";
+            if(system(copy_directory_cmd.c_str()))
+            {
+                cerr << "Can't copy cut directory to: " 
+                    << output_dir << sep << cut_movie << endl;
+                //dont exit so we still clear cut directory
+                did_concat = false;
+            }
         }
 
     }
@@ -304,7 +321,7 @@ void CutMovie( ScoreList score_list, string movie_file, vector<int> target_list,
 
     
     //ask about removing original and only keeping cut
-    if(did_concat && queryYesNo())
+    if(remove_original && did_concat && queryYesNo())
     {
         string rm_cmd = "rm -rf \"" + movie_file + "\"";
         if(system(rm_cmd.c_str()))

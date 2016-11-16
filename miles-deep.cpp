@@ -190,6 +190,8 @@ void PrintHelp()
     cout << "-g\tMax Gap (default: 2)- the largest section of non-target frames in a cut" << endl;
     cout << "-s\tMinimum Score (default: 0.5) - minimum value considered a match [0-1]" << endl;
     cout << "-v\tMinimum coVerage of target frames in a cut (default: 0.4) [0-1]" << endl;
+    cout << "-c\tDon't Concatenate. Output cut directory (default: off)" << endl;
+    cout << "-n\tDoN't ask to remove original movie file (default: off)" << endl;
     cout << endl;
     cout << "Model Options" << endl;
     cout << "-m\tMean file .binaryproto" << endl;
@@ -379,6 +381,8 @@ int main(int argc, char** argv)
   string output_directory = "";
   string temp_directory = "/tmp";
   bool auto_tag = false;
+  bool do_concat = true;
+  bool remove_original = true;
 
 
 
@@ -387,11 +391,14 @@ int main(int argc, char** argv)
   //parse command line flags
   int opt;
   bool set_all_but_other = false;
-  while ((opt = getopt(argc, argv, "at:b:d:o:m:g:s:hxp:w:u:l:")) != -1) 
+  while ((opt = getopt(argc, argv, "act:b:d:o:m:ng:s:hxp:w:u:l:")) != -1) 
   {
         switch (opt) {
         case 'a':
             auto_tag = true;
+            break;
+        case 'c':
+            do_concat = false;
             break;
         case 't':
             target_list = Split(optarg,','); 
@@ -428,6 +435,9 @@ int main(int argc, char** argv)
             break;
         case 'l':
             label_file = optarg;
+            break;
+        case 'n':
+            remove_original = false; 
             break;
         case 'h':
             PrintHelp();
@@ -562,7 +572,8 @@ int main(int argc, char** argv)
       target_ints.push_back(target_idx);
     }
     CutMovie( score_list, movie_file, target_ints, output_directory, temp_directory, 
-            classifier.labels_.size(), min_cut, max_gap, min_score, min_coverage );
+            classifier.labels_.size(), min_cut, max_gap, min_score, 
+            min_coverage, do_concat, remove_original );
   }
 
   //clean up screenshots
