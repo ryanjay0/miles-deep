@@ -170,7 +170,7 @@ void CreateScreenShots(string movie_file, string screenshot_directory)
 
 void PrintUsage(char* prog_name)
 {
-    cout << "Usage: " << prog_name << " [-t target|-x|-a] [-b batch_size] [-c] [-o output_dir] [options] movie_file" << endl;
+    cout << "Usage: " << prog_name << " [-t target|-x|-a] [-b batch_size] [-o output_dir] [options] movie_file" << endl;
     cout << "-h\tPrint more help information about options" << endl;
 }
 
