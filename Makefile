@@ -19,6 +19,9 @@ LDFLAGS := -lm -lglog -lopencv_core -lopencv_highgui -lopencv_imgproc \
 CAFFE := -Wl,--whole-archive $(libcaffe) -Wl,--no-whole-archive 
 
 S := /usr/lib/x86_64-linux-gnu
+
+#if you have trouble making, try removing any problematic static lib
+#and replacing it with -lsomelib in the LDFLAGS instead
 STATIC_LIBS := $S/libgflags.a $S/libboost_thread.a $S/libboost_system.a $S/libprotobuf.a
 
 srcfiles := *.cpp
