@@ -182,7 +182,6 @@ void PrintHelp()
     cout << "-x\tRemove all non-sexual scenes. Same as all targets except \'other\'. Ignores -t." << endl;
     cout << "-a\tCreate a tag file with the cuts for all categories. Ignores -t and -x" << endl; 
     cout << "-b\tBatch size (default: 32) - decrease if you run out of memory" << endl;
-    cout << "-c\tCPU-only (slower but doesn't require CUDA)" << endl;
     cout << "-o\tOutput directory (default: same as input)" << endl;
     cout << "-d\tTemporary Directory (default: /tmp)" << endl;
     cout << endl;
@@ -388,7 +387,7 @@ int main(int argc, char** argv)
   //parse command line flags
   int opt;
   bool set_all_but_other = false;
-  while ((opt = getopt(argc, argv, "at:c:b:d:o:m:g:s:hxp:w:u:l:")) != -1) 
+  while ((opt = getopt(argc, argv, "at:b:d:o:m:g:s:hxp:w:u:l:")) != -1) 
   {
         switch (opt) {
         case 'a':
@@ -414,9 +413,6 @@ int main(int argc, char** argv)
             break;
         case 's':
             min_score = atoi(optarg);
-            break;
-        case 'c':
-            Caffe::set_mode(Caffe::CPU);
             break;
         case 'v':
             min_coverage = atoi(optarg);
