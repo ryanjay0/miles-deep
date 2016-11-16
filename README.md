@@ -112,7 +112,7 @@ label, start, end, score, coverage
 
 ```
 
-The file contains the cuts for each target, ordered as they occur in the movie. The first lines give the movie name, the labels, the total movie time, and the total seconds for each label. Then for each cut it list the start time, end time, average score, and coverage. Because of the threshold and the gaps, these cuts may overlap and aren't guaranteed to cover ever second.
+The file contains the cuts for each target, ordered as they occur in the movie. The first lines gives the movie name, the labels, the total movie time, and the total seconds for each label. Then for each cut it list the start time, end time, average score, and coverage. Because of the threshold and the gaps, these cuts may overlap and aren't guaranteed to cover every second.
 
 ###Prediction Weights
 Here is an example of the predictions for each second of a video:
