@@ -13,126 +13,23 @@
 #include <string>
 
 #include "cut_movie.hpp"
+#include "util.hpp"
 
 using namespace std;
 
-float scoreMax(vector<float> x)
-{
-     return *max_element(x.begin(), x.end());
-}
-
-int scoreArgMax(vector<float> x)
-{
-    return distance(x.begin(), max_element(x.begin(), x.end()));
-}
-
-string getFileName(const string& s)
-{
-    char sep = '/';
-
-    #ifdef _WIN32
-        sep = '\\';
-    #endif
-
-    size_t i = s.rfind(sep, s.length());
-    if( i != string::npos)
-        return(s.substr(i+1, s.length() -i));
-    return(s);
-}
-
-string getFileExtension(const string& s)
-{
-    char sep = '.';
-
-    size_t i = s.rfind(sep, s.length());
-    if( i != string::npos)
-        return(s.substr(i, s.length() -i));
-    return(s);
-}
-
-string getBaseName(const string& s)
-{
-    char sep = '.';
-
-    size_t i = s.rfind(sep, s.length());
-    if( i != string::npos)
-        return(s.substr(0, i));
-    return(s);
-}
-
-bool queryYesNo()
-{
-    cout << "Replace movie with cut? This will delete the movie. [y/N]?";
-    string input;
-    getline(cin, input);
-    if( input == "YES" || input == "Yes" || input == "yes" 
-            || input == "Y" || input == "y")
-        return true;
-    else
-        return false;
-}
-
-std::string GetDirectory (const std::string& path)
-{
-    int found = path.find_last_of("/\\");
-    if(found < 0)
-        return(".");
-    else
-        return(path.substr(0, found));
-}
-
-
-void cut( ScoreList score_list, string movie_file, vector<int> target_list, string output_dir, string temp_dir,
-            int total_targets, int min_cut, int max_gap, float threshold, float min_coverage)
+//find the cuts using the winners and their values (returns the cut_list)
+int findTheCuts(int score_list_size, const vector<int>& winners,const vector<float>& vals, 
+        const vector<int>& target_on, string target, int min_cut, int max_gap, float threshold, float min_coverage,
+        CutList* cut_list)
 {
 
-    //path stuff with movie file
-    char  sep = '/';
-    #ifdef _WIN32
-    char  sep = '\\';
-    #endif
-    string movie_base = getBaseName(getFileName(movie_file));
-    string movie_type = getFileExtension(movie_file);
-    string cut_movie = movie_base + ".cut";
-    string temp_base = temp_dir + sep + "cuts";
-    string temp_path = temp_base + sep + cut_movie;
-    string movie_directory = GetDirectory(movie_file);
-
-    //will come from input
-
-    vector<int> target_on(total_targets,0);
-    for(int i=0; i<target_list.size(); i++)
-       target_on[target_list[i]] = 1; 
-
-
-
-    string mkdir_command = "mkdir -p " + temp_base;
-    if(system(mkdir_command.c_str()))
-    {
-        cerr << "Error making directory: " << temp_base << endl;
-        exit(EXIT_FAILURE);
-    }
-    
-    //init
-    CutList cut_list;
     int cut_start = -1;
     int gap = 0;
     int win_sum = 0;
     float val_sum = 0.0;
-    bool did_concat = true;
+    int total_size = 0;
 
-
-    //find winners and their scores
-    vector<int> winners(score_list.size());
-    vector<float> vals(score_list.size());
-
-    for( int i=0; i < score_list.size(); i++ ){
-        winners[i] = scoreArgMax(score_list[i]);
-        vals[i] = scoreMax(score_list[i]);
-    }
-
-    //find the cuts
-    for( int i=0; i<score_list.size(); i++)
+    for( int i=0; i<score_list_size; i++)
     {
         if( cut_start >= 0 )
         {
@@ -142,11 +39,11 @@ void cut( ScoreList score_list, string movie_file, vector<int> target_list, stri
                 val_sum += vals[i];
             }
             
-            if( !target_on[winners[i]] || vals[i] < threshold || i == score_list.size()-1 )
+            if( !target_on[winners[i]] || vals[i] < threshold || i == score_list_size-1 )
             {
-                if(i < score_list.size()-1) gap++;
+                if(i < score_list_size-1) gap++;
 
-                if( gap > max_gap || i == score_list.size()-1 )
+                if( gap > max_gap || i == score_list_size-1 )
                 {
                     if( cut_start < i - gap - min_cut )
                     {
@@ -157,13 +54,17 @@ void cut( ScoreList score_list, string movie_file, vector<int> target_list, stri
 
                         if(coverage >= min_coverage)
                         {
-                            cout << cut_start << " - " << i - gap << ": size= " 
-                                << win_size << " coverage= " << coverage 
+                            cout << PrettyTime(cut_start) << " - " << PrettyTime(i - gap)
+                                << ": size= " << PrettyTime(win_size) << " coverage= " << coverage 
                                 << " score= " << score_avg << '\n';
+                            total_size += win_size;
                             Cut cut;
                             cut.s = cut_start;
                             cut.e = i-gap;
-                            cut_list.push_back(cut);
+                            cut.score = score_avg;
+                            cut.coverage = coverage;
+                            cut.label = target;
+                            cut_list->push_back(cut);
                         }
                     }
                     cut_start = -1;
@@ -187,7 +88,144 @@ void cut( ScoreList score_list, string movie_file, vector<int> target_list, stri
         }
     }
 
+    return(total_size);
 
+}
+
+
+void TagTargets( ScoreList score_list, string movie_file, string output_dir, 
+        vector<string> labels, int total_targets, int min_cut, int max_gap, 
+        float threshold, float min_coverage)
+{
+    //path stuff with movie file
+    char  sep = '/';
+    #ifdef _WIN32
+    char  sep = '\\';
+    #endif
+    string movie_base = getBaseName(getFileName(movie_file));
+    string movie_directory = getDirectory(movie_file);
+    string tag_movie = movie_base + ".tag";
+    if(output_dir == "")
+        output_dir = movie_directory;
+    string tag_path = output_dir + sep + tag_movie;
+
+    //find winners and their scores
+    vector<int> winners(score_list.size());
+    vector<float> vals(score_list.size());
+    for( int i=0; i < score_list.size(); i++ )
+    {
+        winners[i] = scoreArgMax(score_list[i]);
+        vals[i] = scoreMax(score_list[i]);
+    }
+
+    //open tag output file
+    ofstream f(tag_path);
+    if(!f)
+    {
+        cerr << "Cannot open file: " << tag_path << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    //write header
+    f << getFileName(movie_file) << ",";
+    for(int i=0; i < labels.size(); i++)
+         f << labels[i] << ",";
+    f << endl;
+
+    //find the predicted cuts for each target
+    vector<int> target_time(total_targets,0);
+    CutList cut_list;
+    for(int i=0; i < total_targets; i++)
+    {
+
+        vector<int> target_on(total_targets,0);
+        target_on[i] = 1; 
+
+        cout << "Target [" << labels[i] << "]" << endl;
+
+        target_time[i] = findTheCuts(score_list.size(), winners, vals, target_on, labels[i], min_cut, 
+            max_gap, threshold, min_coverage, &cut_list);
+
+
+        cout << "Total cut length: " << PrettyTime(target_time[i]) << endl;
+        cout << endl;
+
+    }
+
+    //write target total information
+    f << score_list.size() << ",";
+    for(int i=0; i< total_targets; i++)
+        f << target_time[i] << ",";
+    f << endl;
+
+    //sort the list based on cut start time
+    sort(cut_list.begin(),cut_list.end(), [](const Cut &x, const Cut &y){ return (x.s < y.s);});
+
+
+    //write cutlist to tag file
+    f << "label,start,end,score,coverage" << endl;
+    for( int j=0; j<cut_list.size(); j++)
+    {
+        Cut this_cut = cut_list[j];
+        f << this_cut.label << "," << this_cut.s << "," << this_cut.e 
+            << "," << this_cut.score << "," << this_cut.coverage << endl;
+    }
+
+    cout << "Writing tag data to: " << tag_path << endl; 
+    f.close();
+
+}
+
+
+void CutMovie( ScoreList score_list, string movie_file, vector<int> target_list, 
+        string output_dir, string temp_dir, int total_targets, int min_cut, int max_gap, 
+        float threshold, float min_coverage)
+{
+
+    //path stuff with movie file
+    char  sep = '/';
+    #ifdef _WIN32
+    char  sep = '\\';
+    #endif
+    string movie_base = getBaseName(getFileName(movie_file));
+    string movie_type = getFileExtension(movie_file);
+    string cut_movie = movie_base + ".cut";
+    string temp_base = temp_dir + sep + "cuts";
+    string temp_path = temp_base + sep + cut_movie;
+    string movie_directory = getDirectory(movie_file);
+
+    //will come from input
+    vector<int> target_on(total_targets,0);
+    for(int i=0; i<target_list.size(); i++)
+       target_on[target_list[i]] = 1; 
+
+
+
+    string mkdir_command = "mkdir -p " + temp_base;
+    if(system(mkdir_command.c_str()))
+    {
+        cerr << "Error making directory: " << temp_base << endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    //init
+    CutList cut_list;
+    bool did_concat = true;
+
+
+    //find winners and their scores
+    vector<int> winners(score_list.size());
+    vector<float> vals(score_list.size());
+
+    for( int i=0; i < score_list.size(); i++ )
+    {
+        winners[i] = scoreArgMax(score_list[i]);
+        vals[i] = scoreMax(score_list[i]);
+    }
+
+    int total = findTheCuts(score_list.size(), winners, vals, target_on, 
+            "", min_cut, max_gap, threshold, min_coverage, &cut_list);
+    cout << "Total cut length: " << PrettyTime(total) << endl;
     //make the cuts
     if( cut_list.size() > 0 )
     {
@@ -205,11 +243,7 @@ void cut( ScoreList score_list, string movie_file, vector<int> target_list, stri
         //use output_seek for wmv. fixed bug where cuts would freeze
         bool output_seek = false;
         if(movie_type == ".wmv" || movie_type == ".WMV" || movie_type == ".Wmv")
-        {
-            movie_type = ".mkv";
             output_seek = true;
-        }
-
 
         //output a file for each cut in the list
         for( int i=0; i<cut_list.size(); i++)

@@ -20,6 +20,7 @@
 #include <fstream>
 #include <boost/thread.hpp>
 #include "cut_movie.hpp"
+#include "util.hpp"
 
 
 using namespace caffe;  // NOLINT(build/namespaces)
@@ -169,7 +170,7 @@ void CreateScreenShots(string movie_file, string screenshot_directory)
 
 void PrintUsage(char* prog_name)
 {
-    cout << "Usage: " << prog_name << " [-t target|-x] [-b batch_size] [-c] [-o output_dir] [options] movie_file" << endl;
+    cout << "Usage: " << prog_name << " [-t target|-x|-a] [-b batch_size] [-c] [-o output_dir] [options] movie_file" << endl;
     cout << "-h\tPrint more help information about options" << endl;
 }
 
@@ -179,6 +180,7 @@ void PrintHelp()
     cout << "Main Options" << endl;
     cout << "-t\tComma separated list of the Targets to search for (default:blowjob_handjob)" << endl;
     cout << "-x\tRemove all non-sexual scenes. Same as all targets except \'other\'. Ignores -t." << endl;
+    cout << "-a\tCreate a tag file with the cuts for all categories. Ignores -t and -x" << endl; 
     cout << "-b\tBatch size (default: 32) - decrease if you run out of memory" << endl;
     cout << "-c\tCPU-only (slower but doesn't require CUDA)" << endl;
     cout << "-o\tOutput directory (default: same as input)" << endl;
@@ -377,15 +379,21 @@ int main(int argc, char** argv)
   string label_file = model_dir + "labels.txt";
   string output_directory = "";
   string temp_directory = "/tmp";
+  bool auto_tag = false;
+
+
 
 
 
   //parse command line flags
   int opt;
   bool set_all_but_other = false;
-  while ((opt = getopt(argc, argv, "t:c:b:d:o:m:g:s:hxp:w:u:l:")) != -1) 
+  while ((opt = getopt(argc, argv, "at:c:b:d:o:m:g:s:hxp:w:u:l:")) != -1) 
   {
         switch (opt) {
+        case 'a':
+            auto_tag = true;
+            break;
         case 't':
             target_list = Split(optarg,','); 
             break;
@@ -457,14 +465,19 @@ int main(int argc, char** argv)
         target_list = allExceptOther(classifier.labels_);
 
   //print targets
-  cout << "Targets: [";
-  for(int i=0; i<target_list.size(); i++)
+  if(auto_tag)
+      cout << "Auto-tag mode" << endl;
+  else
   {
-        cout << target_list[i];
-        if(i < target_list.size()-1)
-            cout << ", ";
+      cout << "Targets: [";
+      for(int i=0; i<target_list.size(); i++)
+      {
+          cout << target_list[i];
+          if(i < target_list.size()-1)
+              cout << ", ";
+      }
+      cout << "]" << endl;
   }
-  cout << "]" << endl;
 
   
   global_ffmpeg_done = MAX_IMG_IDX;
@@ -475,9 +488,12 @@ int main(int argc, char** argv)
   bool no_more = false;
   ScoreList score_list;
 
+  //loop till all screenshots have been
+  //extracted and classified
   while(true)
   {
     vector<cv::Mat> imgs;
+    //fill a batch with screenshots to classify
     for( int i=0; i < batch_size; i++ )
     {
         
@@ -487,9 +503,9 @@ int main(int argc, char** argv)
         if(idx % report_interval == 0)
         {
             if(global_ffmpeg_done < MAX_IMG_IDX)
-                cout << idx << "/" << global_ffmpeg_done << endl;
+                cout << PrettyTime(idx) << "/" << PrettyTime(global_ffmpeg_done) << endl;
             else
-                cout << idx << endl;
+                cout << PrettyTime(idx) << endl;
         }
 
         string the_image = "img_" + FormatFileNumber(idx) + ".jpg";
@@ -518,6 +534,7 @@ int main(int argc, char** argv)
             break;
     }
 
+    //don't try to classify an empty batch
     if(imgs.size() == 0)
         break;
 
@@ -532,22 +549,32 @@ int main(int argc, char** argv)
     epoch += 1;
   }
 
-  //make the cuts based on the predictions
-  vector<int> target_ints;
-  for(int i=0; i<target_list.size(); i++)
+  //Either create a file out the cuts for all targets
+  //or make the cuts from the input list
+  if(auto_tag)
   {
-    int target_idx = IndexOf(target_list[i],classifier.labels_);
-    target_ints.push_back(target_idx);
+    TagTargets( score_list, movie_file, output_directory, classifier.labels_,
+            classifier.labels_.size(), min_cut, max_gap, min_score ,min_coverage);
   }
-  cut( score_list, movie_file, target_ints, output_directory, temp_directory,
-          classifier.labels_.size(), min_cut, max_gap, min_score, min_coverage );
+  else
+  {
+    //make the cuts based on the predictions
+    vector<int> target_ints;
+    for(int i=0; i<target_list.size(); i++)
+    {
+      int target_idx = IndexOf(target_list[i],classifier.labels_);
+      target_ints.push_back(target_idx);
+    }
+    CutMovie( score_list, movie_file, target_ints, output_directory, temp_directory, 
+            classifier.labels_.size(), min_cut, max_gap, min_score, min_coverage );
+  }
 
   //clean up screenshots
   string clean_cmd = "rm -rf " + screenshot_directory;
   if(system(clean_cmd.c_str()))
   {
-      cerr << "Error cleaning up temporary files: " << clean_cmd << endl;
-      exit(EXIT_FAILURE);
+    cerr << "Error cleaning up temporary files: " << clean_cmd << endl;
+    exit(EXIT_FAILURE);
   }
 
 }

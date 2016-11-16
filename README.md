@@ -51,7 +51,7 @@ I'm working on a version for Windows. Sorry, I don't have a Mac but it should ru
 ##Usage
 
 Example:
-```shell
+```bash
 miles-deep -t sex_back,sex_front movie.mp4
 ``` 
 
@@ -59,7 +59,7 @@ This finds the scenes sex from the back or front and outputs the result
 in `movie.cut.avi`
 
 Example:
-```shell
+```bash
 miles-deep -x movie.avi
 ```
 
@@ -67,7 +67,7 @@ This edits out all the non-sexual scenes from `movie.avi`
 and outputs the result in `movie.cut.avi`.
 
 Example:
-```
+```bash
 miles-deep -b 16 -t cunnilingus -o /cut_movies movie.mkv
 ```
 
@@ -92,6 +92,27 @@ VRAM(GB)  |  batch\_size  |    run time
 Tested on an Nvidia GTX 960 with 4GB VRAM and a 24.5 minute video file. At batch\_size 32 it took approximately 0.6 seconds to process 1 minute of input video or about 36 seconds per hour.
 
 In addition to batching, Miles Deep also uses threading, which allows the screenshots to be captured and processed while they are classified.
+
+###Auto-Tagging Without Cutting
+
+Example:
+```bash
+miles-deep movie.mp4 -a
+```
+
+By popular demand I added this option, which outputs `movie.tag`:
+
+```
+movie_name, label_1, ..., label_n
+total_time, label_1_time, ..., label_n_time
+label, start, end, score, coverage
+.
+.
+.
+
+```
+
+The file contains the cuts for each target, ordered as they occur in the movie. The first lines give the movie name, the labels, the total movie time, and the total seconds for each label. Then for each cut it list the start time, end time, average score, and coverage. Because of the threshold and the gaps, these cuts may overlap and aren't guaranteed to cover ever second.
 
 ###Prediction Weights
 Here is an example of the predictions for each second of a video:
