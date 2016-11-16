@@ -243,7 +243,11 @@ void CutMovie( ScoreList score_list, string movie_file, vector<int> target_list,
         //use output_seek for wmv. fixed bug where cuts would freeze
         bool output_seek = false;
         if(movie_type == ".wmv" || movie_type == ".WMV" || movie_type == ".Wmv")
+        {
             output_seek = true;
+            movie_type = ".mkv";
+        }
+
 
         //output a file for each cut in the list
         for( int i=0; i<cut_list.size(); i++)
