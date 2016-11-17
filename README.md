@@ -32,9 +32,9 @@ Additional drivers from NVIDIA that make the CUDA GPU support even faster.
 
 ####Download Miles Deep
 
-* [miles-deep (GPU + CuDNN)](https://github.com/ryanjay0/miles-deep/releases/download/v0.3/miles-deep-xxx.v0.3.tgz)
-* [miles-deep (GPU)](https://github.com/ryanjay0/miles-deep/releases/download/v0.3/miles-deep-gpu.v0.3.tgz)
-* [miles-deep (CPU)](https://github.com/ryanjay0/miles-deep/releases/download/v0.3/miles-deep-cpu.v0.3.tgz)
+* [miles-deep (GPU + CuDNN)](https://github.com/ryanjay0/miles-deep/releases/download/v0.4/miles-deep-xxx.v0.4.tgz)
+* [miles-deep (GPU)](https://github.com/ryanjay0/miles-deep/releases/download/v0.4/miles-deep-gpu.v0.4.tgz)
+* [miles-deep (CPU)](https://github.com/ryanjay0/miles-deep/releases/download/v0.4/miles-deep-cpu.v0.4.tgz)
 
 Download the [model](https://github.com/ryanjay0/miles-deep/files/587616/model.v0.1.tar.gz) too. Put miles-deep in the same location as the model folder (not in it). 
 
@@ -46,7 +46,7 @@ GPU | 19s
 CPU  | 1m 59s 
 *on a 24.5 minute video with a GTX 960 4GB
 ###Windows and OSX
-I'm working on a version for Windows. Sorry, I don't have a Mac but it should run on OSX with few changes. [Compilations instructions](https://github.com/ryanjay0/miles-deep#compiling) below.
+I'm working on a version for Windows. Sorry, I don't have a Mac but it should run on OSX with few changes. [Compilations instructions](https://github.com/ryanjay0/miles-deep#compiling) below. I'll accept pull requests related to OSX or other linux compatibility. Windows will likely require anothe repository to link with Caffe for windows.
 
 ##Usage
 
