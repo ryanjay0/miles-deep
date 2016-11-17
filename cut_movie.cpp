@@ -29,6 +29,8 @@ int findTheCuts(int score_list_size, const vector<int>& winners,const vector<flo
     float val_sum = 0.0;
     int total_size = 0;
 
+    cout << "Min coverage =========== " << min_coverage << endl;
+
     for( int i=0; i<score_list_size; i++)
     {
         if( cut_start >= 0 )

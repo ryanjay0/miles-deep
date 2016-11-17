@@ -366,8 +366,8 @@ int main(int argc, char** argv)
   int sleep_time = 1;
   int min_cut = 4;
   int max_gap = 2;
-  int min_score = 0.5;
-  int min_coverage = 0.4;
+  double min_score = 0.5;
+  double min_coverage = 0.4;
   vector<string> target_list;
   target_list.push_back("blowjob_handjob");  //the default target
   string movie_file;
@@ -391,7 +391,7 @@ int main(int argc, char** argv)
   //parse command line flags
   int opt;
   bool set_all_but_other = false;
-  while ((opt = getopt(argc, argv, "act:b:d:o:m:ng:s:hxp:w:u:l:")) != -1) 
+  while ((opt = getopt(argc, argv, "act:b:d:o:m:ng:s:hxp:w:u:l:v:")) != -1) 
   {
         switch (opt) {
         case 'a':
@@ -419,10 +419,10 @@ int main(int argc, char** argv)
             max_gap = atoi(optarg);
             break;
         case 's':
-            min_score = atoi(optarg);
+            min_score = atof(optarg);
             break;
         case 'v':
-            min_coverage = atoi(optarg);
+            min_coverage = atof(optarg);
             break;
         case 'm':
             mean_file = optarg;
