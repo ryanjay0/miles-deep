@@ -154,7 +154,7 @@ Top1         |    93.9
 
 
 Below are the results for fine-tuning the top3 layers with different models,
-tested on 2500 training images, taken from different videos than the training set.
+tested on 2500 images, taken from different videos than the training set.
 
 Model |   Accuracy(%)   |  Flops(millions) | Params(millions) 
 --- | ---: | ---: | ---:
